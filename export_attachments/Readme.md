@@ -57,3 +57,15 @@ In Odoo, We can export all fields but binary fields is very hard to download for
 ## Filename Details
 
 ![alt text](static/description/s10.png "Configured model -> Action -> Export Attachments")
+
+## For next upgrade 
+
+- Bulk import attachments using file name: 
+    
+    `[<model>-<recordID>-<field_name>]<filename>`
+
+    Ex:-
+
+    `[hr_applicant-10-document]odoo_gold_partner_rgb.png`
+
+    We can easily import multiple attachments at once !!! 

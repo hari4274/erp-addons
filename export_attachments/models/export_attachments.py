@@ -17,6 +17,8 @@ class ExportAttachments(models.Model):
 	server_action_id = fields.Many2one('ir.actions.server', string='Server Action')
 	bind_model_id = fields.Many2one(related='server_action_id.binding_model_id', string='Binding Model')
 	active = fields.Boolean('Active', default=True)
+	export_field_line = fields.One2many('export.field.line', 'export_id', string='Field Lines')
+	is_attachment = fields.Boolean("Download Related Documents from Attachments", default=True, help='Download related documents from attachments')
 
 	def get_server_action_data(self):
 		model_id = self.model_id
@@ -68,12 +70,34 @@ class ExportAttachments(models.Model):
 		}
 	
 	def _get_data_file(self, record_ids):
-		filename = 'Download-attachments'
+		model = self.model_id
+		filename = model.model.replace('.', '_') + '-Data'
 		t_zip = tempfile.TemporaryFile()
-		records = self.env[self.model_id.model].browse(record_ids)
-		print(records)
 		with zipfile.ZipFile(t_zip, 'a', compression=zipfile.ZIP_DEFLATED, allowZip64=True) as zipf:
-			for file_name, data in [(attach.datas_fname, attach.datas) for attach in attach_ids]:
-				zipf.writestr(file_name, base64.b64decode(data))
+			if self.is_attachment:
+				records = self.env['ir.attachment'].search([('res_model', '=', model.model), ('res_id', 'in', record_ids)])
+				if records:
+					for file_name, datas in [('[{0}-{1}]{2}'.format(attach.res_model.replace('.', '_'), attach.res_id, attach.name), attach.datas) for attach in records]:
+						zipf.writestr(file_name, base64.b64decode(datas))
+			elif self.export_field_line:
+				records = self.env[model.model].browse(record_ids)
+				if records:
+					data_list = []
+					field_data = {line.bname_field_id.name: line.binary_field_id.name for line in self.export_field_line}
+					for record in records:
+						for fname_field, datas_field in field_data.items():
+							file_name = '[{0}-{1}-{2}]{3}'.format(model.model.replace('.', '_'), record.id, datas_field, getattr(record, fname_field))
+							datas = getattr(record, datas_field)
+							zipf.writestr(file_name, base64.b64decode(datas))
 		t_zip.seek(0)
 		return filename, t_zip
+
+
+class ExportFieldLine(models.Model):
+	_name = 'export.field.line'
+	_description = 'Export Field Lines'
+	_rec_name = 'export_id'
+
+	export_id = fields.Many2one('export.attachments', string='Export Attachment')
+	binary_field_id = fields.Many2one('ir.model.fields', string='Binary Data Field')
+	bname_field_id = fields.Many2one('ir.model.fields', string='Binary Filename Field')

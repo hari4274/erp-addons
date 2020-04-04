@@ -61,7 +61,7 @@
                     <widget name="web_ribbon" text="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
                     <group>
                         <group>
-                            <field name="model_id" options="{'no_open': True, 'no_create': True}"/>
+                            <field name="model_id" options="{'no_create': True}"/>
                         </group>
                         <group>
                             <field name="server_action_id" attrs="{'invisible': [('server_action_id', '=', False)]}" readonly="1"/>
@@ -69,6 +69,23 @@
                             <field name="active" invisible="1"/>
                         </group>
                     </group>
+                    <notebook>
+                        <page string="Options" name="field_options">
+                            <group>
+                                <group>
+                                    <field name="is_attachment"/>
+                                </group>
+                                <group string="Fields" attrs="{'invisible': [('is_attachment', '!=', False)]}">
+                                    <field name="export_field_line" nolabel="1" mode="tree" context="{'model_id': model_id}" attrs="{'invisible': [('is_attachment', '!=', False)]}">
+                                        <tree string="Export Fields" editable="top">
+                                            <field name="binary_field_id" required="1" domain="[('ttype', '=', 'binary'), ('model_id', '=', context.get('model_id'))]" options="{'no_create': True}"/>
+                                            <field name="bname_field_id" required="1" domain="[('ttype', '=', 'char'), ('model_id', '=', context.get('model_id'))]" options="{'no_create': True}"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>

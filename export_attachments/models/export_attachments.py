@@ -22,6 +22,7 @@ class ExportAttachments(models.Model):
 	groups_id = fields.Many2many('res.groups', string='Allowed Groups')
 
 	def get_server_action_data(self):
+		# Server Action Data Generation
 		model_id = self.model_id
 		if not model_id:
 			raise ValidationError('Please Fill Model !!!')
@@ -37,25 +38,30 @@ class ExportAttachments(models.Model):
 		}
 
 	def create_server_action(self):
+		# Create Server Action
 		if self.server_action_id:
 			raise ValidationError('Already Server Action Created !!!')
 		self.server_action_id = self.env['ir.actions.server'].create(self.get_server_action_data())
 	
 	def update_server_action(self):
+		# Update Created Server Action
 		if not self.server_action_id:
 			raise ValidationError('Please Create Server action, and try again !!!')
 		self.server_action_id.write(self.get_server_action_data())
 
 	def create_action(self):
+		# Add Action Menu
 		if not self.server_action_id:
 			raise ValidationError('Please Create Server action, and try again !!!')
 		self.server_action_id.create_action()
 
 	def unlink_action(self):
+		# Remove Action Menu
 		if self.server_action_id:
 			self.server_action_id.unlink_action()
 
 	def download_attachments(self):
+		# Download Attachment trigger based on configuration
 		attach_ids = []
 		base_url = self.env['ir.config_parameter'].get_param('web.base.url')
 		context = self.env.context
@@ -72,16 +78,18 @@ class ExportAttachments(models.Model):
 				slug(self),
 				context.get('record_ids'),
 			),
-			'target': 'new',
+			'target': 'self',
 		}
 	
 	def _get_data_file(self, record_ids):
+		# Create Zip file
 		model = self.model_id.model
+		attach_obj = self.env['ir.attachment']
 		filename = model.replace('.', '_') + '-Data'
 		t_zip = tempfile.TemporaryFile()
 		with zipfile.ZipFile(t_zip, 'a', compression=zipfile.ZIP_DEFLATED, allowZip64=True) as zipf:
 			if self.is_attachment:
-				records = self.env['ir.attachment'].search([('res_model', '=', model), ('res_id', 'in', record_ids)])
+				records = attach_obj.search([('res_model', '=', model), ('res_id', 'in', record_ids), ('type', '=', 'binary')])
 				if records:
 					for file_name, datas in [('[{0}-{1}]{2}'.format(attach.res_model.replace('.', '_'), attach.res_id, attach.name), attach.datas) for attach in records]:
 						if datas:
@@ -93,11 +101,21 @@ class ExportAttachments(models.Model):
 					for record in records:
 						for fname_field, datas_field in field_data.items():
 							file_name = '[{0}-{1}-{2}]{3}'.format(model.replace('.', '_'), record.id, datas_field, getattr(record, fname_field))
+							if '.' not in file_name[-5:]:  # For image widget fields doesn't need a filename field , mostly compute image fields 
+								file_name = file_name + '.png'
 							datas = getattr(record, datas_field)
 							if datas:
 								zipf.writestr(file_name, base64.b64decode(datas))
-		t_zip.seek(0)
+		a = t_zip.seek(0)
+		print(a)
 		return filename, t_zip
+	
+	def unlink(self):
+		for rec in self:
+			if rec.server_action_id:
+				# Explicitly unlink export attachment so we have to delete that the related server action
+				rec.server_action_id.unlink()
+		return super(ExportAttachments, self).unlink()
 
 
 class ExportFieldLine(models.Model):

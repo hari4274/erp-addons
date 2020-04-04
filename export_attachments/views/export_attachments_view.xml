@@ -36,8 +36,8 @@
                         string="Create Server Action"
                         class="oe_highlight" icon="fa-plus"
                         attrs="{'invisible': [('server_action_id', '!=', False)]}"/>
-                    <button name="update_server_action" type="object"
-                        string="Update Server Action" icon="fa-edit"
+                    <button name="update_server_action" type="object" class="oe_highlight"
+                        string="Update Server Action" icon="fa-refresh"
                         attrs="{'invisible': [('server_action_id', '=', False)]}"/>
                 </header>
                 <sheet>

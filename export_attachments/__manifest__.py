@@ -11,9 +11,11 @@
     'version': '13.0.1.1',
     'description': """
         Export Attachments
+        In Odoo, We can export all fields but binary fields is very hard to download for many records at once. So planned to give a solution fot that.
     """,
     'summary': 'Export Attachments',
     'category': 'Tools',
+    'website': 'https://github.com/hari4274/erp-addons/tree/13.0/export_attachments',
     'sequence': 5,
     'data': [
         'security/ir.model.access.csv',

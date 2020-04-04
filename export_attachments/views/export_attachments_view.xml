@@ -85,6 +85,12 @@
                                 </group>
                             </group>
                         </page>
+                        <page string="Groups">
+                            <strong>Without any groups, there is no groups restriction for Action -> Export Attachments</strong>
+                            <group>
+                                <field name="groups_id" widget="many2many_tags" options="{'no_create': True}"/>
+                            </group>
+                        </page>
                     </notebook>
                 </sheet>
             </form>

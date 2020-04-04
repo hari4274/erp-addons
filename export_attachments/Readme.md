@@ -45,10 +45,15 @@ In Odoo, We can export all fields but binary fields is very hard to download for
 ![alt text](static/description/s9.png "Configured model -> Action -> Export Attachments")
 
 ## Options
-    1) To download related all attachments, enable "Download all related documents from attachments"
-    ![alt text](static/description/s8.png "Download all related documents from attachments")
-    2) To download specific binary field, fill fields
-    ![alt text](static/description/s6.png "To download specific binary field, fill fields")
+
+1) To download related all attachments, enable "Download all related documents from attachments"
+
+![alt text](static/description/s8.png "Download all related documents from attachments")
+
+2) To download specific binary field, fill fields
+
+![alt text](static/description/s6.png "To download specific binary field, fill fields")
 
 ## Filename Details
+
 ![alt text](static/description/s10.png "Configured model -> Action -> Export Attachments")

@@ -1,6 +1,6 @@
 # Export Attachments
 
-In Odoo, We can export all fields but binary fields is very hard to download for many records at once. So planned to give a solution fot that.
+In Odoo, We can export all fields but binary fields is very hard to download for many records at once. So planned to give a solution for that.
 
 - This module helps you to download all attachments or any binary fields in that model at once.
     

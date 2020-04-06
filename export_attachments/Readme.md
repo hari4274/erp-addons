@@ -58,6 +58,14 @@ In Odoo, We can export all fields but binary fields is very hard to download for
 
 ![alt text](static/description/s10.png "Configured model -> Action -> Export Attachments")
 
+## Videos
+
+### Initial Setup
+[![Initial Setup](http://img.youtube.com/vi/1Via3k99HRs/0.jpg)](http://www.youtube.com/watch?v=1Via3k99HRs)
+
+### Export Test
+[![Export Test](http://img.youtube.com/vi/XrILxLA8Ies/0.jpg)](http://www.youtube.com/watch?v=XrILxLA8Ies)
+
 ## For next upgrade 
 
 - Bulk import attachments using file name: 

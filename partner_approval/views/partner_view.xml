@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record model="ir.ui.view" id="partner_view_order_form_inherit">
+        <field name="name">partner_view_order_form_inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <field name="active" position="after">
+                <field name="need_approval" invisible="1"/>
+            </field>
+            <xpath expr="//sheet" position="before">
+              <div class="alert alert-warning text-center" role="alert" attrs="{'invisible': [('need_approval', '=', False)]}">
+                Partner record need validation from <span><strong>Administrator / Technical Features Group</strong> !!!</span>
+              </div>
+              <header>
+                <button name="action_validate" type="object" string="Validate" groups="base.group_no_one" style="background-color:red;color:white" attrs="{'invisible': [('need_approval', '=', False)]}"/>
+              </header>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="sale_partner_draft_action" model="ir.actions.act_window">
+        <field name="name">Customers (Draft)</field>
+        <field name="res_model">res.partner</field>
+        <field name="domain">[('need_approval', '!=', False), ('active', '=', False)]</field>
+        <field name="context">{'search_default_customer': 1,'res_partner_search_mode': 'customer', 'default_is_company': True, 'default_customer_rank': 1, 'default_need_approval': 1, 'default_active': 0}</field>
+        <field name="help" type="html">
+          <p class="o_view_nocontent_smiling_face">
+            Create Record from Customers (Draft) menu, those contacts need validation automatically enable
+          </p>
+        </field>
+    </record>
+
+    <menuitem
+        id="submenu_sale_partner_draft_act"
+        name="Customers (Draft)"
+        sequence="3"
+        action="sale_partner_draft_action"
+        parent="sale.sale_order_menu"/>
+    
+    <record model="ir.actions.server" id="validate_partner_action_server">
+      <field name="name">Validate Partners</field>
+      <field name="model_id" ref="base.model_res_partner"/>
+      <field name="binding_model_id" ref="base.model_res_partner"/>
+      <field name="state">code</field>
+      <field name="code">
+if records:
+    records.action_validate()
+      </field>
+    </record>
+
+</odoo>

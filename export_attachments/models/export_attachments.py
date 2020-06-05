@@ -63,7 +63,7 @@ class ExportAttachments(models.Model):
 	def download_attachments(self):
 		# Download Attachment trigger based on configuration
 		attach_ids = []
-		base_url = self.env['ir.config_parameter'].get_param('web.base.url')
+		base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
 		context = self.env.context
 		if self.groups_id:
 			user_groups = self.env.user.groups_id
@@ -94,6 +94,8 @@ class ExportAttachments(models.Model):
 					for file_name, datas in [('[{0}-{1}]{2}'.format(attach.res_model.replace('.', '_'), attach.res_id, attach.name), attach.datas) for attach in records]:
 						if datas:
 							zipf.writestr(file_name, base64.b64decode(datas))
+				else:
+					raise ValidationError('There no Attachments found !!!')
 			elif self.export_field_line:
 				records = self.env[model].browse(record_ids)
 				if records:
@@ -106,8 +108,9 @@ class ExportAttachments(models.Model):
 							datas = getattr(record, datas_field)
 							if datas:
 								zipf.writestr(file_name, base64.b64decode(datas))
+							else:
+								raise ValidationError('There no Attachments found !!!')
 		a = t_zip.seek(0)
-		print(a)
 		return filename, t_zip
 	
 	def unlink(self):

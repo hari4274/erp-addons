@@ -12,7 +12,10 @@ class ExportAttachmentController(Controller):
     @route('/download_attachments/<model("export.attachments"):export_id>', type='http', auth='user')
     def download_attachments_control(self, export_id, **kwargs):
         record_ids = eval(kwargs.get('record_ids', '[]'))
-        filename, t_zip = export_id._get_data_file(record_ids)
+        try:
+            filename, t_zip = export_id._get_data_file(record_ids)
+        except Exception as e:
+            return "No Attachments found"
         headers = [
             ('Content-Type', 'application/octet-stream; charset=binary'),
             ('Content-Disposition', content_disposition('%s.zip' % filename))

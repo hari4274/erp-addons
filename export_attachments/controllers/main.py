@@ -15,7 +15,8 @@ class ExportAttachmentController(Controller):
         try:
             filename, t_zip = export_id._get_data_file(record_ids)
         except Exception as e:
-            return "No Attachments found"
+            auto_goBack = "<script>setTimeout(function(){window.history.back();}, 2000);</script>"
+            return f"{auto_goBack}<center><h1 style='color:red'>{e.name}</h1><br><button onclick='window.history.back();'>Back</button></center>"
         headers = [
             ('Content-Type', 'application/octet-stream; charset=binary'),
             ('Content-Disposition', content_disposition('%s.zip' % filename))

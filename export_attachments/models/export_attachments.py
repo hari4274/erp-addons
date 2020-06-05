@@ -95,7 +95,7 @@ class ExportAttachments(models.Model):
 						if datas:
 							zipf.writestr(file_name, base64.b64decode(datas))
 				else:
-					raise ValidationError('There no Attachments found !!!')
+					raise ValidationError('No Attachments found !!!')
 			elif self.export_field_line:
 				records = self.env[model].browse(record_ids)
 				if records:
@@ -109,7 +109,7 @@ class ExportAttachments(models.Model):
 							if datas:
 								zipf.writestr(file_name, base64.b64decode(datas))
 							else:
-								raise ValidationError('There no Attachments found !!!')
+								raise ValidationError('No Attachments found !!!')
 		a = t_zip.seek(0)
 		return filename, t_zip
 	
